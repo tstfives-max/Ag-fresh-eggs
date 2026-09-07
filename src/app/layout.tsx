@@ -29,9 +29,6 @@ export const metadata: Metadata = {
     siteName: "AG Fresh Eggs",
     type: "website",
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export const viewport: Viewport = {

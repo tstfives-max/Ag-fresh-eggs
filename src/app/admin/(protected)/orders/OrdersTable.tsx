@@ -55,7 +55,7 @@ export function OrdersTable() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="ag-input w-auto"
+          className="ag-input flex-1 sm:max-w-[200px]"
         >
           <option value="">All statuses</option>
           {ALL_STATUSES.map((s) => (
@@ -67,7 +67,7 @@ export function OrdersTable() {
         <select
           value={paymentFilter}
           onChange={(e) => setPaymentFilter(e.target.value)}
-          className="ag-input w-auto"
+          className="ag-input flex-1 sm:max-w-[200px]"
         >
           <option value="">All payments</option>
           <option value="paid">Paid</option>
