@@ -19,13 +19,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "AG Fresh Eggs — Fresh Eggs Delivered in Danapur",
   description:
-    "Order fresh eggs online from AG Fresh Eggs by AG Enterprises. Fast hyperlocal delivery within 3 KM of Danapur Canteen, Patna.",
+    "Order fresh eggs online from AG Fresh Eggs by AG Enterprises. Fast hyperlocal delivery within 3 KM of Danapur, Patna.",
   applicationName: "AG Fresh Eggs",
   manifest: "/manifest.webmanifest",
   openGraph: {
     title: "AG Fresh Eggs — Fresh Eggs Delivered in Danapur",
     description:
-      "Farm-fresh eggs delivered to your doorstep within 3 KM of Danapur Canteen, Patna.",
+      "Farm-fresh eggs delivered to your doorstep within 3 KM of Danapur, Patna.",
     siteName: "AG Fresh Eggs",
     type: "website",
   },

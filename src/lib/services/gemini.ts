@@ -35,7 +35,7 @@ const tools: FunctionDeclaration[] = [
   {
     name: "check_delivery_zone",
     description:
-      "Checks whether a given latitude/longitude falls inside AG Fresh Eggs' delivery zone around Danapur Canteen.",
+      "Checks whether a given latitude/longitude falls inside AG Fresh Eggs' delivery zone around Danapur.",
     parameters: {
       type: SchemaType.OBJECT,
       properties: {

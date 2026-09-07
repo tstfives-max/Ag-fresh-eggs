@@ -225,7 +225,7 @@ export default function CheckoutPage() {
               />
             </Field>
             <p className="rounded-lg bg-ag-green/5 px-3 py-2 text-xs text-ag-green">
-              You&apos;re about {location.distanceKm} km from Danapur Canteen — inside the
+              You&apos;re about {location.distanceKm} km from Danapur — inside the
               delivery zone.
             </p>
           </div>

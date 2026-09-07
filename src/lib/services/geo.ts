@@ -1,6 +1,6 @@
 /**
  * Delivery geofencing. This enforces the single most important business rule in the app:
- * AG Fresh Eggs only delivers within a configurable radius of the Danapur Canteen base
+ * AG Fresh Eggs only delivers within a configurable radius of the Danapur base
  * location. This module must be the ONLY place distance/zone math happens — never
  * re-implement Haversine or radius checks inline elsewhere.
  *

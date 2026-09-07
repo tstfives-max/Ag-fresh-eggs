@@ -8,11 +8,11 @@ export const BRAND = {
   appName: "AG Fresh Eggs",
   parentCompany: "AG Enterprises",
   tagline: "Farm Fresh Eggs, Delivered Near You",
-  serviceLocationLabel: "Danapur Canteen, Patna – 801503",
+  serviceLocationLabel: "Danapur, Patna – 801503",
 } as const;
 
 export const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "917781898766";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "919835898736";
 
 export function buildWhatsAppLink(message: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;

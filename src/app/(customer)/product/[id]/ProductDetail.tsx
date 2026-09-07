@@ -61,7 +61,7 @@ export function ProductDetail({
 
       <p className="mt-4 text-sm leading-relaxed text-foreground-muted">
         Farm-fresh eggs sourced fresh every morning and date-stamped for freshness. A{" "}
-        {product.pack_label.toLowerCase()} pack, delivered within 3 KM of Danapur Canteen, Patna.
+        {product.pack_label.toLowerCase()} pack, delivered within 3 KM of Danapur, Patna.
       </p>
 
       {!soldOut && (

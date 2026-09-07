@@ -63,7 +63,14 @@ export default function ProfilePage() {
           className="flex items-center gap-3 border-b border-border px-4 py-3.5 text-sm font-medium text-foreground"
         >
           <Shield size={18} className="text-foreground-muted" />
-          Terms &amp; Privacy
+          Terms of Service
+        </Link>
+        <Link
+          href="/privacy"
+          className="flex items-center gap-3 border-b border-border px-4 py-3.5 text-sm font-medium text-foreground"
+        >
+          <Shield size={18} className="text-foreground-muted" />
+          Privacy Policy
         </Link>
         {phone && (
           <button

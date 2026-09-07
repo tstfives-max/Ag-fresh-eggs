@@ -7,8 +7,8 @@ export default function TermsPage() {
 
       <h2 className="mt-6 font-semibold text-foreground">Service area</h2>
       <p className="mt-1">
-        AG Fresh Eggs (by AG Enterprises) delivers only within a limited radius of Danapur
-        Canteen, Patna – 801503. Orders outside this zone cannot be placed.
+        AG Fresh Eggs (by AG Enterprises) delivers only within a limited radius of Danapur,
+        Patna – 801503. Orders outside this zone cannot be placed.
       </p>
 
       <h2 className="mt-6 font-semibold text-foreground">Payments</h2>

@@ -16,7 +16,7 @@ export default async function HomePage() {
       <section className="ag-fade-up pt-6 pb-8 sm:pt-10 sm:pb-12">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-ag-green/10 px-3 py-1 text-xs font-medium text-ag-green">
           <span className="h-1.5 w-1.5 rounded-full bg-ag-green" />
-          Delivering within 3 KM of Danapur Canteen
+          Delivering within 3 KM of Danapur
         </span>
 
         <h1 className="mt-4 font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl">
@@ -73,7 +73,7 @@ export default async function HomePage() {
           <TrustCard
             icon={<Star size={18} className="text-ag-green" />}
             title="Reliable delivery"
-            body="Serving homes and businesses within 3 KM of Danapur Canteen, Patna."
+            body="Serving homes and businesses within 3 KM of Danapur, Patna."
           />
           <TrustCard
             icon={<IndianRupee size={18} className="text-ag-green" />}
