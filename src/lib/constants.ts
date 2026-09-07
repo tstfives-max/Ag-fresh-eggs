@@ -1,0 +1,38 @@
+/**
+ * Brand + business constants that are genuinely static (names, copy, external links).
+ * Anything that can change without a redeploy (prices, stock, delivery radius, FAQs)
+ * must NOT live here — it comes from Supabase (`products`, `settings`, `faqs`) or env vars.
+ */
+
+export const BRAND = {
+  appName: "AG Fresh Eggs",
+  parentCompany: "AG Enterprises",
+  tagline: "Farm Fresh Eggs, Delivered Near You",
+  serviceLocationLabel: "Danapur Canteen, Patna – 801503",
+} as const;
+
+export const WHATSAPP_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "917781898766";
+
+export function buildWhatsAppLink(message: string): string {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+export const ORDER_STATUSES = [
+  "placed",
+  "confirmed",
+  "packed",
+  "out_for_delivery",
+  "delivered",
+] as const;
+
+export type OrderStatus = (typeof ORDER_STATUSES)[number] | "cancelled";
+
+export const ORDER_STATUS_LABELS: Record<string, string> = {
+  placed: "Order Placed",
+  confirmed: "Confirmed",
+  packed: "Packed",
+  out_for_delivery: "Out for Delivery",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+};

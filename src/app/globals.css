@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --ag-green: #2e7d32;
+  --ag-green-dark: #205e26;
+  --ag-blue: #1857a4;
+  --ag-blue-dark: #123e78;
+  --background: #ffffff;
+  --surface: #f5f6f8;
+  --foreground: #222222;
+  --foreground-muted: #5b6169;
+  --border: #e6e8eb;
+  --danger: #c0392b;
+  --success: #2e7d32;
+  --warning: #b8860b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-ag-green: var(--ag-green);
+  --color-ag-green-dark: var(--ag-green-dark);
+  --color-ag-blue: var(--ag-blue);
+  --color-ag-blue-dark: var(--ag-blue-dark);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-poppins);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes ag-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ag-fade-up {
+  animation: ag-fade-up 0.4s ease-out both;
+}
+
+.ag-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  outline: none;
+  background: white;
+}
+.ag-input:focus {
+  border-color: var(--ag-green);
+}
+
+/* Hide scrollbar for horizontally-scrolling chip rows while keeping it scrollable */
+.ag-scroll-x {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.ag-scroll-x::-webkit-scrollbar {
+  display: none;
+}
