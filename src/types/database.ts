@@ -116,6 +116,9 @@ export type Database = {
       }
       customers: {
         Row: {
+          // Hand-added ahead of the live schema — see the migration in
+          // GOOGLE_LOGIN_SETUP.md, then regenerate this file for real.
+          auth_user_id: string | null
           business_discount_pct: number
           created_at: string
           credit_balance: number
@@ -128,6 +131,7 @@ export type Database = {
           referred_by: string | null
         }
         Insert: {
+          auth_user_id?: string | null
           business_discount_pct?: number
           created_at?: string
           credit_balance?: number
@@ -140,6 +144,7 @@ export type Database = {
           referred_by?: string | null
         }
         Update: {
+          auth_user_id?: string | null
           business_discount_pct?: number
           created_at?: string
           credit_balance?: number

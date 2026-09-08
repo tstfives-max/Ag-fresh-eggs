@@ -8,6 +8,8 @@ import { cartSubtotal, useCartStore } from "@/stores/cart-store";
 import { useLocationStore } from "@/stores/location-store";
 import { loadRazorpayScript } from "@/lib/razorpay-checkout";
 import { registerPushTokenForPhone, getPushToken } from "@/lib/push-notifications";
+import { useAuthUser } from "@/lib/hooks/useAuthUser";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { cn } from "@/lib/utils/cn";
 
 const STEPS = ["Details", "Address", "Summary", "Payment"] as const;
@@ -17,6 +19,7 @@ export default function CheckoutPage() {
   const items = useCartStore((s) => s.items);
   const clearCart = useCartStore((s) => s.clear);
   const location = useLocationStore();
+  const { user: googleUser } = useAuthUser();
 
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState(0);
@@ -32,6 +35,13 @@ export default function CheckoutPage() {
     setAddress(location.addressText ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Autofill from a signed-in Google account, but only into an empty field — never
+  // clobbers something the customer already typed (e.g. they signed in mid-checkout).
+  useEffect(() => {
+    if (googleUser?.name && !name) setName(googleUser.name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [googleUser]);
 
   const subtotal = useMemo(() => cartSubtotal(items), [items]);
 
@@ -202,6 +212,13 @@ export default function CheckoutPage() {
       <div className="mt-8">
         {step === 0 && (
           <div className="flex flex-col gap-4">
+            {!googleUser && (
+              <GoogleSignInButton
+                next="/checkout"
+                label="Sign in with Google to autofill your details"
+                className="w-full"
+              />
+            )}
             <Field label="Full name" error={errors.name}>
               <input
                 value={name}
