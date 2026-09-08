@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { cartSubtotal, useCartStore } from "@/stores/cart-store";
 import { useLocationStore } from "@/stores/location-store";
 import { loadRazorpayScript } from "@/lib/razorpay-checkout";
+import { registerPushTokenForPhone, getPushToken } from "@/lib/push-notifications";
 import { cn } from "@/lib/utils/cn";
 
 const STEPS = ["Details", "Address", "Summary", "Payment"] as const;
@@ -123,6 +124,10 @@ export default function CheckoutPage() {
                 razorpay_order_id: r.razorpay_order_id,
                 razorpay_payment_id: r.razorpay_payment_id,
                 razorpay_signature: r.razorpay_signature,
+                // Included so the server can register it against this order's phone and
+                // send the "order confirmed" push in the same request — waiting for a
+                // separate post-success call to land would race the push send.
+                fcmToken: getPushToken() ?? undefined,
               }),
             });
             const verifyData = await verifyRes.json();
@@ -137,6 +142,10 @@ export default function CheckoutPage() {
             } catch {
               // localStorage unavailable (private browsing etc.) — non-critical
             }
+            // Best-effort — ties this device's FCM token to the phone so the "order
+            // confirmed" push (sent server-side, right after this same verify call
+            // succeeds) actually has somewhere to land. Never blocks navigation.
+            void registerPushTokenForPhone(phone);
             router.push(`/order-confirmation/${createData.orderId}`);
           } catch {
             setPayError("Payment wasn't completed. Your cart is safe.");

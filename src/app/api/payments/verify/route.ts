@@ -2,12 +2,16 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyRazorpayPaymentSignature } from "@/lib/services/razorpay";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { sendOrderConfirmedPush } from "@/lib/services/push";
 
 const schema = z.object({
   orderId: z.string().uuid(),
   razorpay_order_id: z.string(),
   razorpay_payment_id: z.string(),
   razorpay_signature: z.string(),
+  // Optional: the paying device's FCM token, so we can register it against this order's
+  // phone and push the confirmation immediately, in the same request.
+  fcmToken: z.string().min(10).optional(),
 });
 
 /**
@@ -24,7 +28,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid verification payload." }, { status: 400 });
   }
 
-  const { orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = parsed.data;
+  const { orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature, fcmToken } = parsed.data;
 
   let signatureValid = false;
   try {
@@ -51,10 +55,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data: order } = await supabase.from("orders").select("id").eq("id", orderId).single();
+  const { data: order } = await supabase
+    .from("orders")
+    .select("id, customer_phone, payment_status")
+    .eq("id", orderId)
+    .single();
   if (!order) {
     return NextResponse.json({ error: "Order not found." }, { status: 404 });
   }
+
+  // The webhook (server-to-server) can beat this client-redirect call here. Remember
+  // whether *this* call is the one actually transitioning the order, so only one of the
+  // two paths ever sends the confirmation push.
+  const alreadyConfirmed = order.payment_status === "paid";
 
   await supabase
     .from("payments")
@@ -71,7 +84,23 @@ export async function POST(request: Request) {
     .update({ payment_status: "paid", razorpay_payment_id, status: "confirmed" })
     .eq("id", orderId);
 
-  await supabase.from("order_status_history").insert({ order_id: orderId, status: "confirmed" });
+  if (!alreadyConfirmed) {
+    await supabase.from("order_status_history").insert({ order_id: orderId, status: "confirmed" });
+  }
+
+  if (fcmToken && order.customer_phone) {
+    await supabase.from("push_tokens").upsert(
+      { phone: order.customer_phone, fcm_token: fcmToken, platform: "android", updated_at: new Date().toISOString() },
+      { onConflict: "fcm_token" },
+    );
+  }
+
+  if (!alreadyConfirmed) {
+    // Awaited (not fire-and-forget): Vercel can freeze a serverless function right after
+    // it returns a response, so a detached background push might never actually send.
+    // sendOrderConfirmedPush never throws — a push failure can't fail this request.
+    await sendOrderConfirmedPush(orderId);
+  }
 
   return NextResponse.json({ success: true, orderId });
 }

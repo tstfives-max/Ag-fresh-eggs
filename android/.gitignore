@@ -61,8 +61,9 @@ captures/
 .externalNativeBuild
 .cxx/
 
-# Google Services (e.g. APIs or Firebase)
-# google-services.json
+# Google Services (e.g. APIs or Firebase) — download from your own Firebase console,
+# see FCM_PUSH_NOTIFICATIONS.md; kept out of git like the release keystore.
+google-services.json
 
 # Freeline
 freeline.py

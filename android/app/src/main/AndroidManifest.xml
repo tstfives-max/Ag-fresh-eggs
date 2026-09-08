@@ -54,4 +54,8 @@
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false" />
+
+    <!-- Required on Android 13+ for the order-confirmation / order-status push
+         notifications (FCM via @capacitor/push-notifications) to actually show. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

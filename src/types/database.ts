@@ -395,6 +395,36 @@ export type Database = {
         }
         Relationships: []
       }
+      // Hand-added ahead of the live schema — run the migration in
+      // PLAY_STORE_DEPLOYMENT.md / the FCM setup notes, then regenerate this file with
+      // the Supabase MCP `generate_typescript_types` tool to replace this block for real.
+      push_tokens: {
+        Row: {
+          created_at: string
+          fcm_token: string
+          id: string
+          phone: string
+          platform: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fcm_token: string
+          id?: string
+          phone: string
+          platform?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fcm_token?: string
+          id?: string
+          phone?: string
+          platform?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       settings: {
         Row: {
           key: string

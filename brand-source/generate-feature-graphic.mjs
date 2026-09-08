@@ -16,7 +16,6 @@ async function main() {
 
   const logo = await sharp(logoPath).resize({ height: 190 }).toBuffer();
   const logoMeta = await sharp(logo).metadata();
-  const logoW = logoMeta.width;
   const logoH = logoMeta.height;
 
   // Egg motif + soft radial highlight, drawn as SVG so it scales crisply at any DPI.
