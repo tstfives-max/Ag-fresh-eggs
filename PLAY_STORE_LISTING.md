@@ -48,11 +48,10 @@ Have a question? Reach AG Enterprises directly on WhatsApp from inside the app.
 
 ## Graphics checklist
 
-- [ ] App icon — 512×512 PNG, 32-bit with alpha (Play Console hi-res icon)
-- [ ] Feature graphic — 1024×500 PNG or JPEG
-- [ ] Phone screenshots — at least 2, recommend 4–8 (min 320px, max 3840px on the long side)
-  Suggested screens: Home, Shop, Cart, Checkout, Order Tracking, AG Assistant
-- [ ] (Optional) Tablet screenshots if you want tablet listing support
+- [x] App icon — 512×512 PNG, 32-bit with alpha (Play Console hi-res icon) — `public/brand/play-store-icon-512.png`
+- [x] Feature graphic — 1024×500 JPEG — `public/brand/play-store-feature-graphic.jpg`
+- [x] Phone screenshots (5) — `brand-source/screenshots/shot-01-home.png` through `shot-05-shop.png`
+- [ ] (Optional) Tablet screenshots if you want tablet listing support — skip unless you want tablet listing
 
 ## Content rating questionnaire — expected answers
 

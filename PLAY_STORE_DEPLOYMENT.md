@@ -19,12 +19,15 @@ identity/business details.
 | Signed release app bundle (.aab) | ✅ Done | `android/app/build/outputs/bundle/release/app-release.aab` |
 | Signing keystore (needed for every future update) | ✅ Done | `android/app/ag-fresh-eggs-release.keystore` |
 | App icon (512×512) | ✅ Done | `public/brand/play-store-icon-512.png` |
+| Feature graphic (1024×500) | ✅ Done | `public/brand/play-store-feature-graphic.jpg` |
 | Phone screenshots (5) | ✅ Done | `brand-source/screenshots/shot-*.png` |
 | Store listing copy (title, description, etc.) | ✅ Done | `PLAY_STORE_LISTING.md` |
 | Privacy Policy page (required by Play Store) | ✅ Live | https://ag-fresh-eggs.vercel.app/privacy |
 | Data Safety form answers | ✅ Drafted | `PLAY_STORE_LISTING.md` |
 | Content rating pointers | ✅ Drafted | `PLAY_STORE_LISTING.md` |
-| Feature graphic (1024×500) | ❌ Not yet made | — ask me to generate it if you want one before publishing |
+| Location permissions declared correctly | ✅ Done | `android/app/src/main/AndroidManifest.xml` |
+| Target API level (Play Store requires recent) | ✅ Compliant | API 36 (`android/variables.gradle`) |
+| Real support email for the listing | ❌ Needed | placeholder in `PLAY_STORE_LISTING.md` — tell me the email to use and I'll fill it in |
 
 **⚠️ Before you do anything else: back up the keystore.**
 `android/app/ag-fresh-eggs-release.keystore` and `android/keystore.properties`
