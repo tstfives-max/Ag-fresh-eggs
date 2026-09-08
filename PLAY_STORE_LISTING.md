@@ -21,7 +21,7 @@ Farm-fresh eggs delivered near Danapur, Patna — order in a few taps.
 AG Fresh Eggs by AG Enterprises brings farm-fresh eggs straight to your door — fast, simple, and hyperlocal.
 
 🥚 SIMPLE PACKS
-Choose from 6, 12, or 30-piece packs, or a full box of 100 — pricing and stock update live, so what you see is always current.
+Choose from 6, 12, or 30-piece packs, or a full box of 210 — pricing and stock update live, so what you see is always current.
 
 📍 HYPERLOCAL DELIVERY
 We currently deliver within 3 KM of Danapur, Patna – 801503. The app checks your exact location before checkout so you always know if you're in our zone.

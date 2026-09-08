@@ -37,5 +37,21 @@
 
     <!-- Permissions -->
 
+    <!-- Required: loads the live AG Fresh Eggs web app -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Required: the delivery-zone checker uses the browser geolocation API
+         (navigator.geolocation) inside the WebView to confirm the customer is
+         within the 3 KM delivery radius. Coarse is enough for that; fine is
+         included so a precise fix is offered when the device can provide one. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Declares to the Play Store that location is used to serve the app's
+         core feature (delivery-zone check), not for ads/background tracking,
+         so the app isn't wrongly flagged as requiring background location. -->
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
 </manifest>
