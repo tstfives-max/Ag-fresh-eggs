@@ -96,11 +96,18 @@ tweak. Tell me if you hit this and I'll build that flow.
 
 ---
 
-## Summary of what only you can do here
+## Status: fully configured ✅
 
-- Run the SQL migration
-- Create the Google OAuth client in Google Cloud Console (5 min, reuses the
-  Firebase project)
-- Paste the Client ID/Secret into Supabase's Google provider settings
-- Set Supabase's Site URL / Redirect URL
-- Test sign-in on the actual installed app and tell me if Google blocks it there
+Done, end to end, on 2026-09-08:
+- SQL migration run (`customers.auth_user_id` column exists, verified in Table Editor)
+- Google OAuth client created in Google Cloud Console (`ag-egg-app` project),
+  with the Supabase callback URL registered
+- Client ID/Secret pasted into Supabase's Google provider, provider enabled
+- Supabase Site URL set to `https://ag-fresh-eggs.vercel.app`
+- Redirect URL `https://ag-fresh-eggs.vercel.app/auth/callback` added
+- Verified live: `/profile` shows the "Sign in with Google" button
+
+**Remaining:** test an actual sign-in on https://ag-fresh-eggs.vercel.app/profile,
+and separately test it from inside the installed Android app — see the WebView
+risk noted above. Tell me what happens on either and I'll fix anything that
+comes up.
