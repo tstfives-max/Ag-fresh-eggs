@@ -17,14 +17,13 @@ export default function PrivacyPolicyPage() {
         <li>Delivery address and, with your permission, device location, used to confirm you&apos;re within our delivery zone and to deliver your order</li>
         <li>Order details — items, quantities, amounts, and status</li>
         <li>Payment confirmation status from Razorpay (we never receive or store your card, UPI, or bank account details ourselves)</li>
-        <li>Messages you send our AG Assistant chatbot, to answer your question and improve the assistant</li>
       </ul>
 
       <h2 className="mt-6 font-semibold text-foreground">How we use it</h2>
       <ul className="mt-1 list-disc space-y-1 pl-5">
         <li>To take, confirm, deliver, and track your orders</li>
         <li>To verify your address is inside our 3&nbsp;KM delivery zone</li>
-        <li>To respond to support requests and answer questions via WhatsApp or the AG Assistant</li>
+        <li>To respond to support requests and answer questions via WhatsApp</li>
         <li>To improve the Service and fix problems</li>
       </ul>
 
@@ -35,7 +34,6 @@ export default function PrivacyPolicyPage() {
       <ul className="mt-1 list-disc space-y-1 pl-5">
         <li><strong>Supabase</strong> — our database and authentication provider, which stores your account and order data</li>
         <li><strong>Razorpay</strong> — our payment processor, which handles your payment directly; we receive only a success/failure confirmation</li>
-        <li><strong>Google (Gemini API)</strong> — powers the AG Assistant chatbot; messages you send it are processed by Google to generate a reply</li>
         <li><strong>WhatsApp</strong> — if you tap &quot;Confirm on WhatsApp&quot;, your order details are included in a message you choose to send yourself</li>
       </ul>
       <p className="mt-1">We do not sell your personal information to anyone.</p>

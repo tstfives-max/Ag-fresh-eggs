@@ -35,9 +35,6 @@ Every order can be confirmed instantly over WhatsApp — no waiting on hold.
 📦 LIVE ORDER TRACKING
 Follow your order from placed → confirmed → packed → out for delivery → delivered, right in the app.
 
-🤖 AG ASSISTANT
-Have a question about packs, prices, delivery, or your order? Ask our AI shopping assistant — it always pulls real, current answers, never guesses.
-
 🏢 BULK & BUSINESS ORDERS
 Running a hostel, PG, restaurant, or shop? Message us for bulk pricing.
 
@@ -68,7 +65,6 @@ Based on what the app actually collects (see `src/app/(customer)/privacy/page.ts
 | Purchase history | Yes | App functionality, analytics | — |
 | Payment info | Handled by Razorpay directly — app never stores card/UPI/bank details. Cash/UPI-QR orders: no payment data collected by the app at all, paid directly to the business. | — | Razorpay |
 | Device or other IDs | Yes (push notification token, so order-status updates can be delivered) | App functionality | Google (Firebase Cloud Messaging) |
-| User-generated content (chat messages to AG Assistant) | Yes | App functionality | Google (Gemini API) |
 
 Data is transmitted over HTTPS/TLS. Users can request deletion via WhatsApp (see Privacy Policy).
 

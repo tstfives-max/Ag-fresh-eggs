@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { StickyCartBar } from "@/components/layout/StickyCartBar";
-import { ChatWidget } from "@/components/ai/ChatWidget";
 import { PushNotificationsInit } from "@/components/push/PushNotificationsInit";
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
@@ -12,7 +11,6 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
       <main className="flex-1 pb-24 sm:pb-8">{children}</main>
       <StickyCartBar />
       <BottomNav />
-      <ChatWidget />
     </>
   );
 }
