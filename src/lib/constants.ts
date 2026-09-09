@@ -9,6 +9,10 @@ export const BRAND = {
   parentCompany: "AG Enterprises",
   tagline: "Farm Fresh Eggs, Delivered Near You",
   serviceLocationLabel: "Danapur, Patna – 801503",
+  // A marketing estimate, not a guarantee tied to real dispatch logic — same spirit as
+  // `tagline` above. If this ever needs to vary by load/time of day, move it to the
+  // `settings` table like the delivery radius already is.
+  deliveryTimeLabel: "30 mins",
 } as const;
 
 export const WHATSAPP_NUMBER =

@@ -11,6 +11,7 @@ import { registerPushTokenForPhone, getPushToken } from "@/lib/push-notification
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { cn } from "@/lib/utils/cn";
+import { BRAND } from "@/lib/constants";
 
 const STEPS = ["Details", "Address", "Summary", "Payment"] as const;
 
@@ -319,6 +320,10 @@ export default function CheckoutPage() {
                 <div className="flex justify-between">
                   <span>Delivering to</span>
                   <span className="max-w-[60%] text-right">{address}</span>
+                </div>
+                <div className="mt-1 flex justify-between">
+                  <span>Estimated delivery</span>
+                  <span className="font-medium text-ag-green">{BRAND.deliveryTimeLabel}</span>
                 </div>
               </div>
               <div className="mt-2 flex justify-between border-t border-border pt-2 font-semibold text-foreground">

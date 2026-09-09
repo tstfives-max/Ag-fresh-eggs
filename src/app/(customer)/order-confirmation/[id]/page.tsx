@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { WhatsAppConfirmButton } from "./WhatsAppConfirmButton";
 import { LinkButton } from "@/components/ui/Button";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Zap } from "lucide-react";
 import type { Json } from "@/types/database";
+import { BRAND } from "@/lib/constants";
 
 export default async function OrderConfirmationPage({
   params,
@@ -29,6 +30,10 @@ export default async function OrderConfirmationPage({
       </div>
       <h1 className="mt-4 font-display text-2xl font-bold text-foreground">Order Confirmed 🎉</h1>
       <p className="mt-1 text-sm text-foreground-muted">Order #{order.order_number}</p>
+      <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
+        <Zap size={12} className="fill-amber-700" />
+        Arriving in ~{BRAND.deliveryTimeLabel}
+      </span>
 
       <div className="mt-6 rounded-2xl border border-border bg-white p-4 text-left">
         {items.map((item, i) => (
