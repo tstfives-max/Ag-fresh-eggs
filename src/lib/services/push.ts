@@ -120,7 +120,7 @@ export async function sendAdminNewOrderPush(orderId: string): Promise<void> {
     const supabase = createAdminSupabaseClient();
     const { data: order } = await supabase
       .from("orders")
-      .select("order_number, customer_name, customer_phone, address, items, total")
+      .select("order_number, customer_name, customer_phone, address, items, total, payment_method")
       .eq("id", orderId)
       .maybeSingle();
 
@@ -138,7 +138,8 @@ export async function sendAdminNewOrderPush(orderId: string): Promise<void> {
           .join(", ")
       : "";
 
-    const title = `New order #${order.order_number} — ₹${order.total}`;
+    const codTag = order.payment_method === "cod" ? " (COD)" : "";
+    const title = `New order #${order.order_number} — ₹${order.total}${codTag}`;
     const body = `${order.customer_name ?? "Guest"} · ${itemsLine}`;
     const link = "https://ag-fresh-eggs-admin.vercel.app/admin/orders";
 

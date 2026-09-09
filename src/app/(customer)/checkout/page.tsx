@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Banknote, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cartSubtotal, useCartStore } from "@/stores/cart-store";
 import { useLocationStore } from "@/stores/location-store";
@@ -29,6 +29,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [payError, setPayError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
 
   useEffect(() => {
     setMounted(true);
@@ -84,7 +85,53 @@ export default function CheckoutPage() {
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
 
-  async function handlePay() {
+  function handlePay() {
+    if (paymentMethod === "cod") {
+      void handleCod();
+    } else {
+      void handlePayOnline();
+    }
+  }
+
+  async function handleCod() {
+    setPayError(null);
+    setPaying(true);
+    try {
+      if (location.latitude === null || location.longitude === null) {
+        throw new Error("Location not confirmed. Please recheck your delivery zone.");
+      }
+
+      const res = await fetch("/api/orders/cod", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerName: name,
+          customerPhone: phone,
+          address,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Could not place your order.");
+
+      clearCart();
+      try {
+        localStorage.setItem("ag-fresh-eggs-phone", phone);
+      } catch {
+        // localStorage unavailable (private browsing etc.) — non-critical
+      }
+      void registerPushTokenForPhone(phone);
+      router.push(`/order-confirmation/${data.orderId}`);
+    } catch (err) {
+      setPayError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setPaying(false);
+    }
+  }
+
+  async function handlePayOnline() {
     setPayError(null);
     setPaying(true);
     try {
@@ -288,15 +335,53 @@ export default function CheckoutPage() {
               <p className="text-sm text-foreground-muted">Amount payable</p>
               <p className="mt-1 text-3xl font-bold text-foreground">₹{subtotal}</p>
             </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("online")}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-4 text-sm font-medium transition",
+                  paymentMethod === "online"
+                    ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
+                    : "border-border text-foreground-muted",
+                )}
+              >
+                <CreditCard size={20} />
+                Pay Online
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("cod")}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-4 text-sm font-medium transition",
+                  paymentMethod === "cod"
+                    ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
+                    : "border-border text-foreground-muted",
+                )}
+              >
+                <Banknote size={20} />
+                Cash on Delivery
+              </button>
+            </div>
+
             {payError && (
               <p className="rounded-lg bg-danger/5 px-3 py-2 text-sm text-danger">{payError}</p>
             )}
+
             <Button size="lg" onClick={handlePay} disabled={paying}>
               {paying ? <Loader2 size={18} className="animate-spin" /> : null}
-              {paying ? "Processing…" : `Pay ₹${subtotal} securely`}
+              {paying
+                ? "Processing…"
+                : paymentMethod === "cod"
+                  ? `Place order — Pay ₹${subtotal} on delivery`
+                  : `Pay ₹${subtotal} securely`}
             </Button>
+
             <p className="text-center text-xs text-foreground-muted">
-              Payments are processed securely via Razorpay (UPI, cards, net banking, wallets).
+              {paymentMethod === "cod"
+                ? "Pay in cash to the delivery person when your order arrives."
+                : "Payments are processed securely via Razorpay (UPI, cards, net banking, wallets)."}
             </p>
           </div>
         )}

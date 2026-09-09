@@ -44,7 +44,10 @@ export default async function OrderConfirmationPage({
           <span>₹{order.total}</span>
         </div>
         <p className="mt-2 text-xs text-foreground-muted">
-          Payment: <span className="font-medium text-ag-green">{order.payment_status}</span>
+          Payment:{" "}
+          <span className="font-medium text-ag-green">
+            {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_status}
+          </span>
         </p>
         <p className="mt-1 text-xs text-foreground-muted">Delivering to: {order.address}</p>
       </div>
@@ -56,6 +59,7 @@ export default async function OrderConfirmationPage({
           total={order.total}
           address={order.address}
           paymentStatus={order.payment_status}
+          paymentMethod={order.payment_method}
         />
         <LinkButton href={`/orders/${order.id}`} variant="outline">
           Track my order
