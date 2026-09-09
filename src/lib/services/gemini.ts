@@ -154,11 +154,17 @@ export async function runAgAssistant(params: {
     tools: [{ functionDeclarations: tools }],
   });
 
-  const chat = model.startChat({ history: params.history });
-  let response = (await chat.sendMessage(params.message)).response;
+  // Manage the conversation as a plain Content[] ourselves instead of going through
+  // model.startChat()/chat.sendMessage() — that helper hardcodes function-response
+  // turns to role "function" (see @google/generative-ai's formatNewContent), which
+  // newer models like gemini-3.6-flash now reject ("Role 'function' is not
+  // supported"). Sending tool results back as role "user" instead, per Gemini's
+  // current multi-turn function-calling shape, avoids that 400.
+  const contents: Content[] = [...params.history, { role: "user", parts: [{ text: params.message }] }];
 
   const cartActions: CartAction[] = [];
   let guard = 0;
+  let response = (await model.generateContent({ contents })).response;
 
   // Tool-calling loop: keep executing whatever the model asks for until it returns
   // plain text. Capped so a misbehaving model can't loop forever.
@@ -166,14 +172,17 @@ export async function runAgAssistant(params: {
     const calls = response.functionCalls();
     if (!calls || calls.length === 0) break;
 
-    const parts = [];
+    contents.push(response.candidates?.[0]?.content ?? { role: "model", parts: [] });
+
+    const responseParts = [];
     for (const call of calls) {
       const { result, cartAction } = await executeTool(call.name, call.args as Record<string, unknown>);
       if (cartAction) cartActions.push(cartAction);
-      parts.push({ functionResponse: { name: call.name, response: { result } } });
+      responseParts.push({ functionResponse: { name: call.name, response: { result } } });
     }
+    contents.push({ role: "user", parts: responseParts });
 
-    response = (await chat.sendMessage(parts)).response;
+    response = (await model.generateContent({ contents })).response;
     guard += 1;
   }
 
