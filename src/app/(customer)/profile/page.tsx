@@ -3,14 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { User, Receipt, Gift, MessageCircle, FileText, Shield, LogOut } from "lucide-react";
+import { User, Receipt, MessageCircle, FileText, Shield, LogOut } from "lucide-react";
 import { buildWhatsAppLink } from "@/lib/constants";
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 const links = [
   { href: "/orders", label: "My Orders", icon: Receipt },
-  { href: "/rewards", label: "AG Rewards", icon: Gift },
   { href: "/bulk", label: "Bulk & Business Orders", icon: FileText },
 ];
 

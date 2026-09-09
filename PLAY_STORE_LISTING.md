@@ -38,9 +38,6 @@ Follow your order from placed → confirmed → packed → out for delivery → 
 🤖 AG ASSISTANT
 Have a question about packs, prices, delivery, or your order? Ask our AI shopping assistant — it always pulls real, current answers, never guesses.
 
-🎁 AG REWARDS
-Every 5th order earns a free 6-pack. Refer a neighbour and you both get ₹20 off.
-
 🏢 BULK & BUSINESS ORDERS
 Running a hostel, PG, restaurant, or shop? Message us for bulk pricing.
 

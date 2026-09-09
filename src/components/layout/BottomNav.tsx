@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ShoppingBag, Receipt, Gift, User } from "lucide-react";
+import { Home, ShoppingBag, Receipt, User } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const items = [
   { href: "/", label: "Home", icon: Home },
   { href: "/shop", label: "Shop", icon: ShoppingBag },
   { href: "/orders", label: "Orders", icon: Receipt },
-  { href: "/rewards", label: "Rewards", icon: Gift },
   { href: "/profile", label: "Profile", icon: User },
 ];
 
@@ -21,7 +20,7 @@ export function BottomNav() {
       aria-label="Primary"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur pb-[env(safe-area-inset-bottom)] sm:hidden"
     >
-      <div className="mx-auto grid max-w-6xl grid-cols-5">
+      <div className="mx-auto grid max-w-6xl grid-cols-4">
         {items.map(({ href, label, icon: Icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (

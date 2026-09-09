@@ -24,7 +24,6 @@ export default function PrivacyPolicyPage() {
       <ul className="mt-1 list-disc space-y-1 pl-5">
         <li>To take, confirm, deliver, and track your orders</li>
         <li>To verify your address is inside our 3&nbsp;KM delivery zone</li>
-        <li>To run the AG Rewards loyalty and referral programs</li>
         <li>To respond to support requests and answer questions via WhatsApp or the AG Assistant</li>
         <li>To improve the Service and fix problems</li>
       </ul>
