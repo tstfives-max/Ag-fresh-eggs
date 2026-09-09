@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -18,6 +18,8 @@ import {
 import { Logo } from "@/components/brand/Logo";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
+import { useNewOrderAlerts } from "@/lib/hooks/useNewOrderAlerts";
+import { OrderToasts } from "@/components/admin/OrderToasts";
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -43,6 +45,7 @@ export function AdminShell({
   const pathname = usePathname();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { toasts, unseenCount, dismissToast, clearUnseen } = useNewOrderAlerts();
 
   async function handleLogout() {
     const supabase = createClient();
@@ -55,13 +58,23 @@ export function AdminShell({
     return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
   }
 
+  // Already looking at Orders (e.g. a new one arrives while this page is open,
+  // or they navigated here some other way) — no reason to keep the badge lit.
+  useEffect(() => {
+    if (pathname.startsWith("/admin/orders")) clearUnseen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, unseenCount]);
+
   const NavLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
     <nav className="flex flex-1 flex-col gap-0.5 p-3">
       {links.map(({ href, label, icon: Icon }) => (
         <Link
           key={href}
           href={href}
-          onClick={onNavigate}
+          onClick={() => {
+            if (href === "/admin/orders") clearUnseen();
+            onNavigate?.();
+          }}
           className={cn(
             "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium",
             isActive(href)
@@ -71,6 +84,11 @@ export function AdminShell({
         >
           <Icon size={17} />
           {label}
+          {href === "/admin/orders" && unseenCount > 0 && (
+            <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-danger px-1.5 text-[11px] font-semibold text-white">
+              {unseenCount}
+            </span>
+          )}
         </Link>
       ))}
     </nav>
@@ -78,6 +96,8 @@ export function AdminShell({
 
   return (
     <div className="flex min-h-screen bg-surface">
+      <OrderToasts toasts={toasts} onDismiss={dismissToast} />
+
       {/* Desktop sidebar */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-white sm:flex">
         <div className="border-b border-border px-4 py-4">
