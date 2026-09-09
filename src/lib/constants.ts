@@ -15,6 +15,12 @@ export const BRAND = {
   deliveryTimeLabel: "30 mins",
 } as const;
 
+export const UPI = {
+  id: "7781898736@indianbk",
+  payeeName: "A G ENTERPRISES",
+  qrImage: "/brand/upi-qr.jpg",
+} as const;
+
 export const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "919835898736";
 

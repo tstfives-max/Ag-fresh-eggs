@@ -51,7 +51,11 @@ export default async function OrderConfirmationPage({
         <p className="mt-2 text-xs text-foreground-muted">
           Payment:{" "}
           <span className="font-medium text-ag-green">
-            {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_status}
+            {order.payment_method === "cod"
+              ? "Cash on Delivery"
+              : order.payment_method === "upi_qr"
+                ? "UPI — pending confirmation"
+                : order.payment_status}
           </span>
         </p>
         <p className="mt-1 text-xs text-foreground-muted">Delivering to: {order.address}</p>

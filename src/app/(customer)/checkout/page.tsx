@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Banknote, CreditCard } from "lucide-react";
+import Image from "next/image";
+import { Check, Loader2, Banknote, CreditCard, QrCode, Copy, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cartSubtotal, useCartStore } from "@/stores/cart-store";
 import { useLocationStore } from "@/stores/location-store";
@@ -11,7 +12,7 @@ import { registerPushTokenForPhone, getPushToken } from "@/lib/push-notification
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { cn } from "@/lib/utils/cn";
-import { BRAND } from "@/lib/constants";
+import { BRAND, UPI } from "@/lib/constants";
 
 const STEPS = ["Details", "Address", "Summary", "Payment"] as const;
 
@@ -30,7 +31,8 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [payError, setPayError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod" | "upi_qr">("online");
+  const [upiCopied, setUpiCopied] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -87,14 +89,14 @@ export default function CheckoutPage() {
   }
 
   function handlePay() {
-    if (paymentMethod === "cod") {
-      void handleCod();
+    if (paymentMethod === "cod" || paymentMethod === "upi_qr") {
+      void handleManual(paymentMethod);
     } else {
       void handlePayOnline();
     }
   }
 
-  async function handleCod() {
+  async function handleManual(method: "cod" | "upi_qr") {
     setPayError(null);
     setPaying(true);
     try {
@@ -102,7 +104,7 @@ export default function CheckoutPage() {
         throw new Error("Location not confirmed. Please recheck your delivery zone.");
       }
 
-      const res = await fetch("/api/orders/cod", {
+      const res = await fetch("/api/orders/manual", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -112,6 +114,7 @@ export default function CheckoutPage() {
           latitude: location.latitude,
           longitude: location.longitude,
           items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+          method,
         }),
       });
 
@@ -129,6 +132,16 @@ export default function CheckoutPage() {
     } catch (err) {
       setPayError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setPaying(false);
+    }
+  }
+
+  async function copyUpiId() {
+    try {
+      await navigator.clipboard.writeText(UPI.id);
+      setUpiCopied(true);
+      setTimeout(() => setUpiCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable — the UPI ID is still shown as plain text to copy manually.
     }
   }
 
@@ -341,12 +354,12 @@ export default function CheckoutPage() {
               <p className="mt-1 text-3xl font-bold text-foreground">₹{subtotal}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2.5">
               <button
                 type="button"
                 onClick={() => setPaymentMethod("online")}
                 className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-2xl border p-4 text-sm font-medium transition",
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-xs font-medium transition",
                   paymentMethod === "online"
                     ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
                     : "border-border text-foreground-muted",
@@ -357,9 +370,22 @@ export default function CheckoutPage() {
               </button>
               <button
                 type="button"
+                onClick={() => setPaymentMethod("upi_qr")}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-xs font-medium transition",
+                  paymentMethod === "upi_qr"
+                    ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
+                    : "border-border text-foreground-muted",
+                )}
+              >
+                <QrCode size={20} />
+                UPI QR
+              </button>
+              <button
+                type="button"
                 onClick={() => setPaymentMethod("cod")}
                 className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-2xl border p-4 text-sm font-medium transition",
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-xs font-medium transition",
                   paymentMethod === "cod"
                     ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
                     : "border-border text-foreground-muted",
@@ -369,6 +395,33 @@ export default function CheckoutPage() {
                 Cash on Delivery
               </button>
             </div>
+
+            {paymentMethod === "upi_qr" && (
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-white p-4 text-center">
+                <p className="text-sm font-medium text-foreground">
+                  Scan with any UPI app to pay ₹{subtotal}
+                </p>
+                <Image
+                  src={UPI.qrImage}
+                  alt="UPI QR code"
+                  width={200}
+                  height={240}
+                  className="h-auto w-44"
+                />
+                <button
+                  type="button"
+                  onClick={copyUpiId}
+                  className="flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-xs font-medium text-foreground"
+                >
+                  {upiCopied ? <CheckCheck size={14} className="text-ag-green" /> : <Copy size={14} />}
+                  {upiCopied ? "Copied" : UPI.id}
+                </button>
+                <p className="text-xs text-foreground-muted">
+                  Payee: {UPI.payeeName}. After paying, tap the button below to place your order —
+                  we&apos;ll confirm your payment before dispatch.
+                </p>
+              </div>
+            )}
 
             {payError && (
               <p className="rounded-lg bg-danger/5 px-3 py-2 text-sm text-danger">{payError}</p>
@@ -380,13 +433,17 @@ export default function CheckoutPage() {
                 ? "Processing…"
                 : paymentMethod === "cod"
                   ? `Place order — Pay ₹${subtotal} on delivery`
-                  : `Pay ₹${subtotal} securely`}
+                  : paymentMethod === "upi_qr"
+                    ? `I've paid — Place order`
+                    : `Pay ₹${subtotal} securely`}
             </Button>
 
             <p className="text-center text-xs text-foreground-muted">
               {paymentMethod === "cod"
                 ? "Pay in cash to the delivery person when your order arrives."
-                : "Payments are processed securely via Razorpay (UPI, cards, net banking, wallets)."}
+                : paymentMethod === "upi_qr"
+                  ? "Manual UPI transfer — your order is confirmed once we verify the payment."
+                  : "Payments are processed securely via Razorpay (UPI, cards, net banking, wallets)."}
             </p>
           </div>
         )}

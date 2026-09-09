@@ -27,9 +27,11 @@ export function WhatsAppConfirmButton({
   const paymentLine =
     paymentMethod === "cod"
       ? "Cash on Delivery"
-      : paymentStatus === "paid"
-        ? "Confirmed via Razorpay"
-        : paymentStatus;
+      : paymentMethod === "upi_qr"
+        ? "Paid via UPI (please verify)"
+        : paymentStatus === "paid"
+          ? "Confirmed via Razorpay"
+          : paymentStatus;
   const message = [
     `Namaste AG Enterprises, maine order place kiya hai.`,
     `Order #${orderNumber}`,

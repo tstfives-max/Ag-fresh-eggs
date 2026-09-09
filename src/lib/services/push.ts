@@ -138,8 +138,9 @@ export async function sendAdminNewOrderPush(orderId: string): Promise<void> {
           .join(", ")
       : "";
 
-    const codTag = order.payment_method === "cod" ? " (COD)" : "";
-    const title = `New order #${order.order_number} — ₹${order.total}${codTag}`;
+    const methodTag =
+      order.payment_method === "cod" ? " (COD)" : order.payment_method === "upi_qr" ? " (UPI - verify)" : "";
+    const title = `New order #${order.order_number} — ₹${order.total}${methodTag}`;
     const body = `${order.customer_name ?? "Guest"} · ${itemsLine}`;
     const link = "https://ag-fresh-eggs-admin.vercel.app/admin/orders";
 

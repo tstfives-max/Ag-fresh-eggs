@@ -102,7 +102,7 @@ export async function createPendingOrder(params: {
   distanceKm: number;
   priced: PricedOrder;
   discount?: number;
-  paymentMethod?: "razorpay" | "cod";
+  paymentMethod?: "razorpay" | "cod" | "upi_qr";
 }) {
   const supabase = createAdminSupabaseClient();
   const discount = params.discount ?? 0;
