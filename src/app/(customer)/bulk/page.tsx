@@ -34,7 +34,7 @@ export default function BulkOrdersPage() {
         onClick={() =>
           window.open(
             buildWhatsAppLink(
-              "Hi AG Enterprises, I'm interested in bulk/business pricing for regular egg orders.",
+              "Namaste AG Enterprises, mujhe regular egg orders ke liye bulk/business pricing chahiye.",
             ),
             "_blank",
           )

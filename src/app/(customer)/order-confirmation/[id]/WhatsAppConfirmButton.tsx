@@ -23,13 +23,13 @@ export function WhatsAppConfirmButton({
 }) {
   const itemsLine = items.map((i) => `${i.packLabel} x${i.quantity}`).join(", ");
   const message = [
-    `Hi AG Enterprises, I've placed an order.`,
+    `Namaste AG Enterprises, maine order place kiya hai.`,
     `Order #${orderNumber}`,
     `Items: ${itemsLine}`,
     `Total: ₹${total}`,
     `Delivery address: ${address}`,
     `Payment status: ${paymentStatus === "paid" ? "Confirmed via Razorpay" : paymentStatus}`,
-    `Please confirm my delivery slot.`,
+    `Please mera delivery slot confirm kar dijiye.`,
   ].join("\n");
 
   return (

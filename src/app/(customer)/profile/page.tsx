@@ -99,7 +99,7 @@ export default function ProfilePage() {
         ))}
         <button
           onClick={() =>
-            window.open(buildWhatsAppLink("Hi AG Enterprises, I need some help."), "_blank")
+            window.open(buildWhatsAppLink("Namaste AG Enterprises, mujhe thodi help chahiye."), "_blank")
           }
           className="flex items-center gap-3 border-b border-border px-4 py-3.5 text-left text-sm font-medium text-foreground"
         >

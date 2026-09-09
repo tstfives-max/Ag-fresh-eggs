@@ -134,7 +134,7 @@ export function LocationChecker() {
                 onClick={() =>
                   window.open(
                     buildWhatsAppLink(
-                      "Hi AG Enterprises, I'd like to check if you deliver to my area (outside the 3 KM zone shown in the app).",
+                      "Namaste AG Enterprises, kya aap mere area mein delivery karte hain? (App mein dikhaye gaye 3 KM zone ke bahar hai)",
                     ),
                     "_blank",
                   )

@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       reply: fallback,
       cartActions: [],
-      whatsappLink: buildWhatsAppLink("Hi AG Enterprises, I need help with my order."),
+      whatsappLink: buildWhatsAppLink("Namaste AG Enterprises, mujhe apne order mein help chahiye."),
     });
   }
 }

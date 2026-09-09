@@ -91,7 +91,7 @@ export default function RewardsPage() {
               onClick={() =>
                 window.open(
                   buildWhatsAppLink(
-                    `Try AG Fresh Eggs! Use my referral code ${data.referralCode} for ₹${data.referralDiscount} off your first order. https://ag-fresh-eggs.vercel.app`,
+                    `AG Fresh Eggs try karo! Mera referral code ${data.referralCode} use karke apne pehle order par ₹${data.referralDiscount} off pao. https://ag-fresh-eggs.vercel.app`,
                   ),
                   "_blank",
                 )
