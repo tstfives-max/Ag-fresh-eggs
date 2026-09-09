@@ -50,9 +50,14 @@ export function OrderToasts({
             </p>
             <p>{order.items.map((i) => `${i.packLabel} x${i.quantity}`).join(", ")}</p>
             <p className="line-clamp-2">{order.address}</p>
-            <p className="flex items-center gap-2 pt-0.5">
+            <p className="flex flex-wrap items-center gap-1.5 pt-0.5">
               <span className="font-semibold text-foreground">₹{order.total}</span>
               <span className="capitalize">{order.payment_status}</span>
+              {order.payment_method === "cod" && (
+                <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
+                  COD
+                </span>
+              )}
               <span>·</span>
               <span>{ORDER_STATUS_LABELS[order.status] ?? order.status}</span>
             </p>

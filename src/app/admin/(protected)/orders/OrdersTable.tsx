@@ -13,6 +13,7 @@ type Order = {
   total: number;
   status: string;
   payment_status: string;
+  payment_method: string;
   created_at: string;
 };
 
@@ -109,7 +110,14 @@ export function OrdersTable() {
                     {order.items.map((i) => `${i.packLabel} x${i.quantity}`).join(", ")}
                   </td>
                   <td className="px-4 py-2.5">₹{order.total}</td>
-                  <td className="px-4 py-2.5 capitalize">{order.payment_status}</td>
+                  <td className="px-4 py-2.5">
+                    <span className="capitalize">{order.payment_status}</span>
+                    {order.payment_method === "cod" && (
+                      <span className="ml-1.5 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
+                        COD
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-2.5">
                     <select
                       value={order.status}
