@@ -7,7 +7,6 @@ import { User, Receipt, Gift, MessageCircle, FileText, Shield, LogOut } from "lu
 import { buildWhatsAppLink } from "@/lib/constants";
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
-import { PhoneSignInForm } from "@/components/auth/PhoneSignInForm";
 
 const links = [
   { href: "/orders", label: "My Orders", icon: Receipt },
@@ -68,7 +67,7 @@ export default function ProfilePage() {
         </div>
         <div>
           <p className="font-display font-semibold text-foreground">
-            {user?.name ?? (user?.phone ? `+91 ${user.phone}` : phone ? `+91 ${phone}` : "Guest")}
+            {user?.name ?? (phone ? `+91 ${phone}` : "Guest")}
           </p>
           <p className="text-xs text-foreground-muted">
             {user?.email ?? "AG Fresh Eggs customer"}
@@ -82,12 +81,6 @@ export default function ProfilePage() {
             Sign in to save your details and find your orders on any device.
           </p>
           <GoogleSignInButton next="/profile" className="mt-3 w-full" />
-          <div className="my-3 flex items-center gap-2 text-xs text-foreground-muted">
-            <div className="h-px flex-1 bg-border" />
-            or
-            <div className="h-px flex-1 bg-border" />
-          </div>
-          <PhoneSignInForm />
         </div>
       )}
 

@@ -7,7 +7,6 @@ import { Receipt } from "lucide-react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { useCartStore } from "@/stores/cart-store";
 import { ORDER_STATUS_LABELS } from "@/lib/constants";
-import { PhoneSignInForm } from "@/components/auth/PhoneSignInForm";
 
 type OrderRow = {
   id: string;
@@ -64,28 +63,16 @@ export default function OrdersPage() {
         <Receipt size={28} className="mx-auto text-foreground-muted" />
         <h1 className="mt-3 font-display text-xl font-semibold text-foreground">My Orders</h1>
         <p className="mt-1 text-sm text-foreground-muted">
-          Verify your mobile number with an OTP to securely see your order history
-          on any device.
+          Enter the mobile number you ordered with to see your order history.
         </p>
-        <div className="mt-4 text-left">
-          <PhoneSignInForm onSignedIn={(p) => setPhone(p)} />
-        </div>
-
-        <div className="my-4 flex items-center gap-2 text-xs text-foreground-muted">
-          <div className="h-px flex-1 bg-border" />
-          or just look up by number
-          <div className="h-px flex-1 bg-border" />
-        </div>
-
         <input
           value={phoneInput}
           onChange={(e) => setPhoneInput(e.target.value.replace(/\D/g, "").slice(0, 10))}
           placeholder="10-digit mobile number"
           inputMode="numeric"
-          className="ag-input"
+          className="ag-input mt-4"
         />
         <Button
-          variant="outline"
           className="mt-3 w-full"
           disabled={!/^[6-9]\d{9}$/.test(phoneInput)}
           onClick={() => {

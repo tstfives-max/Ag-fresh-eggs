@@ -8,8 +8,6 @@ export type AuthUser = {
   id: string;
   name: string | null;
   email: string | null;
-  /** 10-digit Indian mobile number (no +91), set when signed in via phone OTP. */
-  phone: string | null;
   avatarUrl: string | null;
 };
 
@@ -19,7 +17,6 @@ function toAuthUser(user: User): AuthUser {
     id: user.id,
     name: (meta.full_name as string) ?? (meta.name as string) ?? null,
     email: user.email ?? null,
-    phone: user.phone ? user.phone.replace(/^91/, "") : null,
     avatarUrl: (meta.avatar_url as string) ?? (meta.picture as string) ?? null,
   };
 }
