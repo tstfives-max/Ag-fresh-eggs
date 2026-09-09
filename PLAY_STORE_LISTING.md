@@ -49,7 +49,7 @@ Have a question? Reach AG Enterprises directly on WhatsApp from inside the app.
 
 ## Content rating questionnaire — expected answers
 
-Category: **Shopping / Food ordering**. No violence, no user-generated content beyond chat with an AI assistant (not user-to-user), no gambling. Should qualify for the lowest rating tier in most regions — answer the actual questionnaire honestly, this is just a pointer to the likely category.
+Category: **Shopping / Food ordering**. No violence, no user-generated content, no gambling. Should qualify for the lowest rating tier in most regions — answer the actual questionnaire honestly, this is just a pointer to the likely category.
 
 ## Data safety form — what to declare
 
