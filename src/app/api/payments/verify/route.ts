@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyRazorpayPaymentSignature } from "@/lib/services/razorpay";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
-import { sendOrderConfirmedPush } from "@/lib/services/push";
+import { sendOrderConfirmedPush, sendAdminNewOrderPush } from "@/lib/services/push";
 
 const schema = z.object({
   orderId: z.string().uuid(),
@@ -100,6 +100,7 @@ export async function POST(request: Request) {
     // it returns a response, so a detached background push might never actually send.
     // sendOrderConfirmedPush never throws — a push failure can't fail this request.
     await sendOrderConfirmedPush(orderId);
+    await sendAdminNewOrderPush(orderId);
   }
 
   return NextResponse.json({ success: true, orderId });

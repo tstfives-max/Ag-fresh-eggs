@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyRazorpayWebhookSignature } from "@/lib/services/razorpay";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
-import { sendOrderConfirmedPush } from "@/lib/services/push";
+import { sendOrderConfirmedPush, sendAdminNewOrderPush } from "@/lib/services/push";
 
 /**
  * Razorpay webhook (configure this URL + RAZORPAY_WEBHOOK_SECRET in the Razorpay dashboard:
@@ -74,6 +74,7 @@ export async function POST(request: Request) {
     // /api/payments/verify, but if it never got back there (closed tab, dropped
     // network), this webhook is the only place confirmation still happens.
     await sendOrderConfirmedPush(payment.order_id);
+    await sendAdminNewOrderPush(payment.order_id);
   }
 
   if (event.event === "payment.failed") {

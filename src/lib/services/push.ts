@@ -107,3 +107,69 @@ export async function sendOrderConfirmedPush(orderId: string): Promise<void> {
     console.error("sendOrderConfirmedPush failed", err);
   }
 }
+
+/**
+ * Pushes a "new order" notification to every admin device registered via the
+ * CMS's "Enable alerts" banner (admin_push_tokens — Web Push, so this reaches
+ * the owner's desktop/phone even with the admin dashboard's browser fully
+ * closed). Best-effort: called alongside sendOrderConfirmedPush from the same
+ * two places, and a failure here must never affect checkout.
+ */
+export async function sendAdminNewOrderPush(orderId: string): Promise<void> {
+  try {
+    const supabase = createAdminSupabaseClient();
+    const { data: order } = await supabase
+      .from("orders")
+      .select("order_number, customer_name, customer_phone, address, items, total")
+      .eq("id", orderId)
+      .maybeSingle();
+
+    if (!order) return;
+
+    const { data: tokens } = await supabase.from("admin_push_tokens").select("fcm_token");
+    if (!tokens || tokens.length === 0) return;
+
+    const app = getFirebaseApp();
+    const messaging = getMessaging(app);
+
+    const itemsLine = Array.isArray(order.items)
+      ? (order.items as Array<{ packLabel?: string; quantity?: number }>)
+          .map((i) => `${i.packLabel ?? ""} x${i.quantity ?? ""}`)
+          .join(", ")
+      : "";
+
+    const title = `New order #${order.order_number} — ₹${order.total}`;
+    const body = `${order.customer_name ?? "Guest"} · ${itemsLine}`;
+    const link = "https://ag-fresh-eggs-admin.vercel.app/admin/orders";
+
+    const staleTokens: string[] = [];
+    await Promise.all(
+      tokens.map(async ({ fcm_token }) => {
+        try {
+          await messaging.send({
+            token: fcm_token,
+            notification: { title, body },
+            data: { orderId, type: "new_order", link },
+            webpush: {
+              fcmOptions: { link },
+              notification: { icon: "/icon.png" },
+            },
+          });
+        } catch (err) {
+          const code = (err as { code?: string })?.code;
+          if (code === "messaging/registration-token-not-registered" || code === "messaging/invalid-argument") {
+            staleTokens.push(fcm_token);
+          } else {
+            console.error("Admin FCM send failed", err);
+          }
+        }
+      }),
+    );
+
+    if (staleTokens.length > 0) {
+      await supabase.from("admin_push_tokens").delete().in("fcm_token", staleTokens);
+    }
+  } catch (err) {
+    console.error("sendAdminNewOrderPush failed", err);
+  }
+}
