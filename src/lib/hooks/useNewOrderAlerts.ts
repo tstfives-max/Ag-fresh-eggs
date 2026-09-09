@@ -45,20 +45,66 @@ function playChime() {
 }
 
 /**
+ * OS-level notification for a new order — pops up like any desktop/phone
+ * notification (works even if the CMS tab is unfocused or in the background,
+ * as long as the browser is running). Falls back silently if permission
+ * hasn't been granted; callers should offer requestNotificationPermission()
+ * somewhere visible (a banner, a settings toggle) so this isn't a dead end.
+ */
+function notifyDesktop(order: AdminOrder) {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+
+  try {
+    const itemsLine = order.items.map((i) => `${i.packLabel} x${i.quantity}`).join(", ");
+    const n = new Notification(`New order #${order.order_number} — ₹${order.total}`, {
+      body: `${order.customer_name ?? "Guest"} · ${itemsLine}`,
+      icon: "/icon.png",
+      tag: `ag-order-${order.id}`, // de-dupes if the same order somehow fires twice
+    });
+    n.onclick = () => {
+      window.focus();
+      window.location.href = "/admin/orders";
+    };
+  } catch {
+    // Notification constructor can throw in odd environments (e.g. some in-app
+    // browsers) — never let this break the rest of the alert pipeline.
+  }
+}
+
+/**
  * Polls the existing /api/admin/orders endpoint (already session-gated,
  * service-role on the server) every 15s and turns any order newer than the
  * highest order_number this browser has seen into a toast + a nav badge
- * count. Deliberately polling rather than Supabase Realtime: Realtime would
- * need the admin's browser session to have direct SELECT access on `orders`
- * via RLS, and today that table is only ever read through the service-role
- * client — adding a client-readable policy just for this isn't worth the
- * exposure. Good enough near-real-time for this order volume.
+ * count + an OS-level desktop notification. Deliberately polling rather than
+ * Supabase Realtime: Realtime would need the admin's browser session to have
+ * direct SELECT access on `orders` via RLS, and today that table is only
+ * ever read through the service-role client — adding a client-readable
+ * policy just for this isn't worth the exposure. Good enough near-real-time
+ * for this order volume.
  */
 export function useNewOrderAlerts() {
   const [toasts, setToasts] = useState<OrderAlert[]>([]);
   const [unseenCount, setUnseenCount] = useState(0);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | "unsupported">(
+    "default",
+  );
   const lastSeenRef = useRef<number | null>(null);
   const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setNotificationPermission("unsupported");
+      return;
+    }
+    setNotificationPermission(Notification.permission);
+  }, []);
+
+  async function requestNotificationPermission() {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    const result = await Notification.requestPermission();
+    setNotificationPermission(result);
+  }
 
   useEffect(() => {
     try {
@@ -113,6 +159,7 @@ export function useNewOrderAlerts() {
         setToasts((prev) => [...prev, ...newToasts]);
         setUnseenCount((c) => c + fresh.length);
         playChime();
+        for (const o of fresh) notifyDesktop(o);
 
         // Auto-dismiss each toast on its own timer so a burst of orders doesn't
         // pile up on screen forever — the nav badge count still reflects them.
@@ -142,5 +189,12 @@ export function useNewOrderAlerts() {
     setUnseenCount(0);
   }
 
-  return { toasts, unseenCount, dismissToast, clearUnseen };
+  return {
+    toasts,
+    unseenCount,
+    dismissToast,
+    clearUnseen,
+    notificationPermission,
+    requestNotificationPermission,
+  };
 }

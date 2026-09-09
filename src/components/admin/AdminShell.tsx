@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   LogOut,
+  Bell,
 } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { cn } from "@/lib/utils/cn";
@@ -45,7 +46,14 @@ export function AdminShell({
   const pathname = usePathname();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { toasts, unseenCount, dismissToast, clearUnseen } = useNewOrderAlerts();
+  const {
+    toasts,
+    unseenCount,
+    dismissToast,
+    clearUnseen,
+    notificationPermission,
+    requestNotificationPermission,
+  } = useNewOrderAlerts();
 
   async function handleLogout() {
     const supabase = createClient();
@@ -169,6 +177,18 @@ export function AdminShell({
             <LogOut size={15} /> Log out
           </button>
         </header>
+        {notificationPermission === "default" && (
+          <div className="flex flex-wrap items-center gap-2 border-b border-ag-green/20 bg-ag-green/5 px-4 py-2 text-sm text-foreground sm:px-6">
+            <Bell size={15} className="shrink-0 text-ag-green" />
+            <span>Get a desktop alert the moment a new order comes in — even in another tab.</span>
+            <button
+              onClick={requestNotificationPermission}
+              className="ml-auto shrink-0 rounded-lg bg-ag-green px-3 py-1 text-xs font-medium text-white"
+            >
+              Enable alerts
+            </button>
+          </div>
+        )}
         <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
       </div>
     </div>
