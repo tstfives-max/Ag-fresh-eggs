@@ -58,6 +58,11 @@ export function OrderToasts({
                   COD
                 </span>
               )}
+              {order.payment_method === "upi_qr" && (
+                <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-sky-700">
+                  UPI — verify
+                </span>
+              )}
               <span>·</span>
               <span>{ORDER_STATUS_LABELS[order.status] ?? order.status}</span>
             </p>
