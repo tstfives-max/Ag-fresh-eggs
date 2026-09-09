@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
 import { useNewOrderAlerts } from "@/lib/hooks/useNewOrderAlerts";
 import { OrderToasts } from "@/components/admin/OrderToasts";
+import { enableAdminPush } from "@/lib/admin-push";
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -64,6 +65,14 @@ export function AdminShell({
 
   function isActive(href: string) {
     return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+  }
+
+  async function handleEnableAlerts() {
+    // Registers this browser for push (survives the browser being fully closed) —
+    // requestNotificationPermission() afterwards just re-reads the now-decided
+    // permission so the banner hides; it doesn't prompt a second time.
+    await enableAdminPush();
+    await requestNotificationPermission();
   }
 
   // Already looking at Orders (e.g. a new one arrives while this page is open,
@@ -180,9 +189,9 @@ export function AdminShell({
         {notificationPermission === "default" && (
           <div className="flex flex-wrap items-center gap-2 border-b border-ag-green/20 bg-ag-green/5 px-4 py-2 text-sm text-foreground sm:px-6">
             <Bell size={15} className="shrink-0 text-ag-green" />
-            <span>Get a desktop alert the moment a new order comes in — even in another tab.</span>
+            <span>Get notified the moment a new order comes in — even with this browser closed.</span>
             <button
-              onClick={requestNotificationPermission}
+              onClick={handleEnableAlerts}
               className="ml-auto shrink-0 rounded-lg bg-ag-green px-3 py-1 text-xs font-medium text-white"
             >
               Enable alerts

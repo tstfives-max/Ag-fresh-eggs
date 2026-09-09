@@ -87,6 +87,44 @@ export type Database = {
         }
         Relationships: []
       }
+      // Hand-added ahead of the live schema — see the migration referenced in
+      // this branch's admin new-order push work; regenerate this file for real
+      // with the Supabase MCP `generate_typescript_types` tool afterwards.
+      admin_push_tokens: {
+        Row: {
+          admin_id: string
+          created_at: string
+          fcm_token: string
+          id: string
+          platform: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          fcm_token: string
+          id?: string
+          platform?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          fcm_token?: string
+          id?: string
+          platform?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_push_tokens_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_logs: {
         Row: {
           created_at: string
