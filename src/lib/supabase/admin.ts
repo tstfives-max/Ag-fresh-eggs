@@ -10,7 +10,6 @@ import type { Database } from "@/types/database";
  *  - order creation after a validated checkout (server route)
  *  - Razorpay webhook handling
  *  - admin dashboard reads/writes (after verifying the caller is in `admins`)
- *  - the Gemini AI backend's tool calls (product lookups, cart/order actions)
  *
  * Never import this into anything that runs in the browser.
  */

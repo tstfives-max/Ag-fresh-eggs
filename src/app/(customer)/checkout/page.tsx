@@ -2,12 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { Check, Loader2, Banknote, CreditCard, QrCode, Copy, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cartSubtotal, useCartStore } from "@/stores/cart-store";
 import { useLocationStore } from "@/stores/location-store";
 import { loadRazorpayScript } from "@/lib/razorpay-checkout";
+import { registerPushTokenForPhone, getPushToken } from "@/lib/push-notifications";
+import { useAuthUser } from "@/lib/hooks/useAuthUser";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { cn } from "@/lib/utils/cn";
+import { BRAND, UPI } from "@/lib/constants";
 
 const STEPS = ["Details", "Address", "Summary", "Payment"] as const;
 
@@ -16,6 +21,7 @@ export default function CheckoutPage() {
   const items = useCartStore((s) => s.items);
   const clearCart = useCartStore((s) => s.clear);
   const location = useLocationStore();
+  const { user: googleUser } = useAuthUser();
 
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState(0);
@@ -25,12 +31,21 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [payError, setPayError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod" | "upi_qr">("online");
+  const [upiCopied, setUpiCopied] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     setAddress(location.addressText ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Autofill from a signed-in Google account, but only into an empty field — never
+  // clobbers something the customer already typed (e.g. they signed in mid-checkout).
+  useEffect(() => {
+    if (googleUser?.name && !name) setName(googleUser.name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [googleUser]);
 
   const subtotal = useMemo(() => cartSubtotal(items), [items]);
 
@@ -73,7 +88,64 @@ export default function CheckoutPage() {
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
 
-  async function handlePay() {
+  function handlePay() {
+    if (paymentMethod === "cod" || paymentMethod === "upi_qr") {
+      void handleManual(paymentMethod);
+    } else {
+      void handlePayOnline();
+    }
+  }
+
+  async function handleManual(method: "cod" | "upi_qr") {
+    setPayError(null);
+    setPaying(true);
+    try {
+      if (location.latitude === null || location.longitude === null) {
+        throw new Error("Location not confirmed. Please recheck your delivery zone.");
+      }
+
+      const res = await fetch("/api/orders/manual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerName: name,
+          customerPhone: phone,
+          address,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+          method,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Could not place your order.");
+
+      clearCart();
+      try {
+        localStorage.setItem("ag-fresh-eggs-phone", phone);
+      } catch {
+        // localStorage unavailable (private browsing etc.) — non-critical
+      }
+      void registerPushTokenForPhone(phone);
+      router.push(`/order-confirmation/${data.orderId}`);
+    } catch (err) {
+      setPayError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setPaying(false);
+    }
+  }
+
+  async function copyUpiId() {
+    try {
+      await navigator.clipboard.writeText(UPI.id);
+      setUpiCopied(true);
+      setTimeout(() => setUpiCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable — the UPI ID is still shown as plain text to copy manually.
+    }
+  }
+
+  async function handlePayOnline() {
     setPayError(null);
     setPaying(true);
     try {
@@ -123,6 +195,10 @@ export default function CheckoutPage() {
                 razorpay_order_id: r.razorpay_order_id,
                 razorpay_payment_id: r.razorpay_payment_id,
                 razorpay_signature: r.razorpay_signature,
+                // Included so the server can register it against this order's phone and
+                // send the "order confirmed" push in the same request — waiting for a
+                // separate post-success call to land would race the push send.
+                fcmToken: getPushToken() ?? undefined,
               }),
             });
             const verifyData = await verifyRes.json();
@@ -137,6 +213,10 @@ export default function CheckoutPage() {
             } catch {
               // localStorage unavailable (private browsing etc.) — non-critical
             }
+            // Best-effort — ties this device's FCM token to the phone so the "order
+            // confirmed" push (sent server-side, right after this same verify call
+            // succeeds) actually has somewhere to land. Never blocks navigation.
+            void registerPushTokenForPhone(phone);
             router.push(`/order-confirmation/${createData.orderId}`);
           } catch {
             setPayError("Payment wasn't completed. Your cart is safe.");
@@ -193,6 +273,13 @@ export default function CheckoutPage() {
       <div className="mt-8">
         {step === 0 && (
           <div className="flex flex-col gap-4">
+            {!googleUser && (
+              <GoogleSignInButton
+                next="/checkout"
+                label="Sign in with Google to autofill your details"
+                className="w-full"
+              />
+            )}
             <Field label="Full name" error={errors.name}>
               <input
                 value={name}
@@ -225,7 +312,7 @@ export default function CheckoutPage() {
               />
             </Field>
             <p className="rounded-lg bg-ag-green/5 px-3 py-2 text-xs text-ag-green">
-              You&apos;re about {location.distanceKm} km from Danapur Canteen — inside the
+              You&apos;re about {location.distanceKm} km from Danapur — inside the
               delivery zone.
             </p>
           </div>
@@ -247,6 +334,10 @@ export default function CheckoutPage() {
                   <span>Delivering to</span>
                   <span className="max-w-[60%] text-right">{address}</span>
                 </div>
+                <div className="mt-1 flex justify-between">
+                  <span>Estimated delivery</span>
+                  <span className="font-medium text-ag-green">{BRAND.deliveryTimeLabel}</span>
+                </div>
               </div>
               <div className="mt-2 flex justify-between border-t border-border pt-2 font-semibold text-foreground">
                 <span>Total</span>
@@ -262,15 +353,97 @@ export default function CheckoutPage() {
               <p className="text-sm text-foreground-muted">Amount payable</p>
               <p className="mt-1 text-3xl font-bold text-foreground">₹{subtotal}</p>
             </div>
+
+            <div className="grid grid-cols-3 gap-2.5">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("online")}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-xs font-medium transition",
+                  paymentMethod === "online"
+                    ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
+                    : "border-border text-foreground-muted",
+                )}
+              >
+                <CreditCard size={20} />
+                Pay Online
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("upi_qr")}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-xs font-medium transition",
+                  paymentMethod === "upi_qr"
+                    ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
+                    : "border-border text-foreground-muted",
+                )}
+              >
+                <QrCode size={20} />
+                UPI QR
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("cod")}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-xs font-medium transition",
+                  paymentMethod === "cod"
+                    ? "border-ag-green bg-ag-green/5 text-ag-green ring-1 ring-ag-green"
+                    : "border-border text-foreground-muted",
+                )}
+              >
+                <Banknote size={20} />
+                Cash on Delivery
+              </button>
+            </div>
+
+            {paymentMethod === "upi_qr" && (
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-white p-4 text-center">
+                <p className="text-sm font-medium text-foreground">
+                  Scan with any UPI app to pay ₹{subtotal}
+                </p>
+                <Image
+                  src={UPI.qrImage}
+                  alt="UPI QR code"
+                  width={200}
+                  height={240}
+                  className="h-auto w-44"
+                />
+                <button
+                  type="button"
+                  onClick={copyUpiId}
+                  className="flex items-center gap-1.5 rounded-lg bg-surface px-3 py-1.5 text-xs font-medium text-foreground"
+                >
+                  {upiCopied ? <CheckCheck size={14} className="text-ag-green" /> : <Copy size={14} />}
+                  {upiCopied ? "Copied" : UPI.id}
+                </button>
+                <p className="text-xs text-foreground-muted">
+                  Payee: {UPI.payeeName}. After paying, tap the button below to place your order —
+                  we&apos;ll confirm your payment before dispatch.
+                </p>
+              </div>
+            )}
+
             {payError && (
               <p className="rounded-lg bg-danger/5 px-3 py-2 text-sm text-danger">{payError}</p>
             )}
+
             <Button size="lg" onClick={handlePay} disabled={paying}>
               {paying ? <Loader2 size={18} className="animate-spin" /> : null}
-              {paying ? "Processing…" : `Pay ₹${subtotal} securely`}
+              {paying
+                ? "Processing…"
+                : paymentMethod === "cod"
+                  ? `Place order — Pay ₹${subtotal} on delivery`
+                  : paymentMethod === "upi_qr"
+                    ? `I've paid — Place order`
+                    : `Pay ₹${subtotal} securely`}
             </Button>
+
             <p className="text-center text-xs text-foreground-muted">
-              Payments are processed securely via Razorpay (UPI, cards, net banking, wallets).
+              {paymentMethod === "cod"
+                ? "Pay in cash to the delivery person when your order arrives."
+                : paymentMethod === "upi_qr"
+                  ? "Manual UPI transfer — your order is confirmed once we verify the payment."
+                  : "Payments are processed securely via Razorpay (UPI, cards, net banking, wallets)."}
             </p>
           </div>
         )}

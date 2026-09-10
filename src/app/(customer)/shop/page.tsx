@@ -27,7 +27,7 @@ export default async function ShopPage() {
     <div className="mx-auto max-w-6xl px-4 py-6">
       <h1 className="font-display text-2xl font-bold text-foreground">Shop Fresh Eggs</h1>
       <p className="mt-1 text-sm text-foreground-muted">
-        Simple packs, fresh delivery — within 3 KM of Danapur Canteen.
+        Simple packs, fresh delivery — within 3 KM of Danapur.
       </p>
 
       {order

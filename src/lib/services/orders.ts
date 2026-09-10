@@ -102,6 +102,7 @@ export async function createPendingOrder(params: {
   distanceKm: number;
   priced: PricedOrder;
   discount?: number;
+  paymentMethod?: "razorpay" | "cod" | "upi_qr";
 }) {
   const supabase = createAdminSupabaseClient();
   const discount = params.discount ?? 0;
@@ -118,7 +119,7 @@ export async function createPendingOrder(params: {
       subtotal: params.priced.subtotal,
       discount,
       total,
-      payment_method: "razorpay",
+      payment_method: params.paymentMethod ?? "razorpay",
       payment_status: "pending",
       status: "placed",
     })

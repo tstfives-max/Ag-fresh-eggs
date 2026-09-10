@@ -78,7 +78,7 @@ export function LocationChecker() {
         Where should we deliver?
       </h1>
       <p className="mt-2 text-sm text-foreground-muted">
-        AG Fresh Eggs currently delivers only within 3 KM of Danapur Canteen, Patna – 801503.
+        AG Fresh Eggs currently delivers only within 3 KM of Danapur, Patna – 801503.
       </p>
 
       <Button
@@ -119,7 +119,7 @@ export function LocationChecker() {
                 : "AG Fresh Eggs isn't delivering to this location yet."}
             </p>
             <p className="mt-1 text-sm text-foreground-muted">
-              You&apos;re about {distanceKm} km from Danapur Canteen.
+              You&apos;re about {distanceKm} km from Danapur.
               {!withinZone && " Please choose an address within 3 KM."}
             </p>
             {withinZone ? (
@@ -134,7 +134,7 @@ export function LocationChecker() {
                 onClick={() =>
                   window.open(
                     buildWhatsAppLink(
-                      "Hi AG Enterprises, I'd like to check if you deliver to my area (outside the 3 KM zone shown in the app).",
+                      "Namaste AG Enterprises, kya aap mere area mein delivery karte hain? (App mein dikhaye gaye 3 KM zone ke bahar hai)",
                     ),
                     "_blank",
                   )

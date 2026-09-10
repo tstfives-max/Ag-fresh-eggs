@@ -87,6 +87,43 @@ export type Database = {
         }
         Relationships: []
       }
+      // Hand-added ahead of the live schema — see push.ts's sendAdminNewOrderPush;
+      // regenerate this file for real with the Supabase MCP tool afterwards.
+      admin_push_tokens: {
+        Row: {
+          admin_id: string
+          created_at: string
+          fcm_token: string
+          id: string
+          platform: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          fcm_token: string
+          id?: string
+          platform?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          fcm_token?: string
+          id?: string
+          platform?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_push_tokens_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_logs: {
         Row: {
           created_at: string
@@ -116,6 +153,9 @@ export type Database = {
       }
       customers: {
         Row: {
+          // Hand-added ahead of the live schema — see the migration in
+          // GOOGLE_LOGIN_SETUP.md, then regenerate this file for real.
+          auth_user_id: string | null
           business_discount_pct: number
           created_at: string
           credit_balance: number
@@ -128,6 +168,7 @@ export type Database = {
           referred_by: string | null
         }
         Insert: {
+          auth_user_id?: string | null
           business_discount_pct?: number
           created_at?: string
           credit_balance?: number
@@ -140,6 +181,7 @@ export type Database = {
           referred_by?: string | null
         }
         Update: {
+          auth_user_id?: string | null
           business_discount_pct?: number
           created_at?: string
           credit_balance?: number
@@ -391,6 +433,36 @@ export type Database = {
           price?: number
           sort_order?: number
           stock_qty?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      // Hand-added ahead of the live schema — run the migration in
+      // PLAY_STORE_DEPLOYMENT.md / the FCM setup notes, then regenerate this file with
+      // the Supabase MCP `generate_typescript_types` tool to replace this block for real.
+      push_tokens: {
+        Row: {
+          created_at: string
+          fcm_token: string
+          id: string
+          phone: string
+          platform: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fcm_token: string
+          id?: string
+          phone: string
+          platform?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fcm_token?: string
+          id?: string
+          phone?: string
+          platform?: string
           updated_at?: string
         }
         Relationships: []

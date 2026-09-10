@@ -104,7 +104,7 @@ export default function CartPage() {
         </div>
 
         <p className="mt-3 text-xs text-foreground-muted">
-          Delivery available within 3 KM of Danapur Canteen, Patna.
+          Delivery available within 3 KM of Danapur, Patna.
         </p>
 
         {withinZone === false && (
