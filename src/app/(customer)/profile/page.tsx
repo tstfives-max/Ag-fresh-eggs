@@ -4,13 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { User, Receipt, MessageCircle, FileText, Shield, LogOut } from "lucide-react";
-import { buildWhatsAppLink } from "@/lib/constants";
 import { useAuthUser } from "@/lib/hooks/useAuthUser";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 const links = [
   { href: "/orders", label: "My Orders", icon: Receipt },
   { href: "/bulk", label: "Bulk & Business Orders", icon: FileText },
+  { href: "/contact", label: "Contact Us", icon: MessageCircle },
 ];
 
 export default function ProfilePage() {
@@ -96,15 +96,6 @@ export default function ProfilePage() {
             {label}
           </Link>
         ))}
-        <button
-          onClick={() =>
-            window.open(buildWhatsAppLink("Namaste AG Enterprises, mujhe thodi help chahiye."), "_blank")
-          }
-          className="flex items-center gap-3 border-b border-border px-4 py-3.5 text-left text-sm font-medium text-foreground"
-        >
-          <MessageCircle size={18} className="text-foreground-muted" />
-          Support
-        </button>
         <Link
           href="/terms"
           className="flex items-center gap-3 border-b border-border px-4 py-3.5 text-sm font-medium text-foreground"

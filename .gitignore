@@ -50,3 +50,5 @@ next-env.d.ts
 /android/app/*.jks
 *.keystore
 *.jks
+
+.env*

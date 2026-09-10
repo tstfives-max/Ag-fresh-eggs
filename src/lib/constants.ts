@@ -13,6 +13,8 @@ export const BRAND = {
   // `tagline` above. If this ever needs to vary by load/time of day, move it to the
   // `settings` table like the delivery radius already is.
   deliveryTimeLabel: "30 mins",
+  contactEmail: "agenterprises626@gmail.com",
+  contactPhoneDisplay: "+91 98358 98736",
 } as const;
 
 export const UPI = {

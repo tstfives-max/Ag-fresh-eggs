@@ -10,6 +10,7 @@ Fill in / adjust anything below, then paste into Play Console → your app → G
 **Contact email:** agenterprises626@gmail.com
 **Contact phone:** +91 98358 98736
 **Website:** https://ag-fresh-eggs.vercel.app
+**Contact URL:** https://ag-fresh-eggs.vercel.app/contact — a dedicated in-app page with WhatsApp, phone (tel: link), and email (mailto: link), reachable from Profile → Contact Us
 **Privacy Policy URL:** https://ag-fresh-eggs.vercel.app/privacy
 
 ## Short description (max 80 characters)
