@@ -14,7 +14,10 @@ export const BRAND = {
   // `settings` table like the delivery radius already is.
   deliveryTimeLabel: "30 mins",
   contactEmail: "agenterprises626@gmail.com",
-  contactPhoneDisplay: "+91 98358 98736",
+  // Calling only — deliberately separate from WHATSAPP_NUMBER below, which is a
+  // different number used only for the WhatsApp chat/confirmation flows.
+  callPhoneNumber: "917781898766",
+  callPhoneDisplay: "+91 77818 98766",
 } as const;
 
 export const UPI = {

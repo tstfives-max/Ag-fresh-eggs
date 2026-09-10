@@ -29,13 +29,13 @@ export default function ContactPage() {
           </div>
         </a>
         <a
-          href={`tel:+${WHATSAPP_NUMBER}`}
+          href={`tel:+${BRAND.callPhoneNumber}`}
           className="flex items-center gap-3 border-b border-border px-4 py-3.5 text-sm font-medium text-foreground"
         >
           <Phone size={18} className="text-ag-green" />
           <div>
             <p>Call us</p>
-            <p className="text-xs font-normal text-foreground-muted">{BRAND.contactPhoneDisplay}</p>
+            <p className="text-xs font-normal text-foreground-muted">{BRAND.callPhoneDisplay}</p>
           </div>
         </a>
         <a
