@@ -27,7 +27,7 @@ identity/business details.
 | Content rating pointers | ✅ Drafted | `PLAY_STORE_LISTING.md` |
 | Location permissions declared correctly | ✅ Done | `android/app/src/main/AndroidManifest.xml` |
 | Target API level (Play Store requires recent) | ✅ Compliant | API 36 (`android/variables.gradle`) |
-| Real support email for the listing | ❌ Needed | placeholder in `PLAY_STORE_LISTING.md` — tell me the email to use and I'll fill it in |
+| Real support email for the listing | ✅ Done | agenterprises626@gmail.com, in `PLAY_STORE_LISTING.md` |
 
 **⚠️ Before you do anything else: back up the keystore.**
 `android/app/ag-fresh-eggs-release.keystore` and `android/keystore.properties`
@@ -86,8 +86,8 @@ from `PLAY_STORE_LISTING.md` in this project:
   want it before you submit (it's optional at draft time but required to publish)
 - **Phone screenshots** — upload the 5 files in `brand-source/screenshots/`
   (`shot-01-home.png` through `shot-05-shop.png`)
-- **Contact details** — email, phone (`PLAY_STORE_LISTING.md` has the phone;
-  add a real support email you check)
+- **Contact details** — email `agenterprises626@gmail.com`, phone (see
+  `PLAY_STORE_LISTING.md`)
 - **Privacy Policy URL:** `https://ag-fresh-eggs.vercel.app/privacy`
 
 Click **Save**.

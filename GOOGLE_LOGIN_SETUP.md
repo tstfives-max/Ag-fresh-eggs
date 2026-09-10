@@ -42,7 +42,7 @@ the same underlying project, no need to create a new one.
 1. Go to https://console.cloud.google.com/apis/credentials?project=ag-egg-app
 2. If prompted, click **Configure consent screen** first:
    - User type: **External**
-   - App name: `AG Fresh Eggs`, support email: your email, developer contact: your email
+   - App name: `AG Enterprises`, support email: `agenterprises626@gmail.com`, developer contact: `agenterprises626@gmail.com`
    - Skip scopes/test users (default is fine) → **Save and continue** through to done
 3. Back on the **Credentials** page → **Create credentials → OAuth client ID**
 4. Application type: **Web application**

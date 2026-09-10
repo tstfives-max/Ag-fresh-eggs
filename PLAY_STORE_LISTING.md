@@ -7,7 +7,7 @@ Fill in / adjust anything below, then paste into Play Console → your app → G
 **App name:** AG Fresh Eggs
 **Package name (application ID):** com.agenterprises.freshegs
 **Category:** Food & Drink
-**Contact email:** (add a real support email — Play Console requires one)
+**Contact email:** agenterprises626@gmail.com
 **Contact phone:** +91 98358 98736
 **Website:** https://ag-fresh-eggs.vercel.app
 **Privacy Policy URL:** https://ag-fresh-eggs.vercel.app/privacy
