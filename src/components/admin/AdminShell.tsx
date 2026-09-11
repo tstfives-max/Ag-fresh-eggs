@@ -47,6 +47,8 @@ export function AdminShell({
   const pathname = usePathname();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [enabling, setEnabling] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
   const {
     toasts,
     unseenCount,
@@ -67,11 +69,33 @@ export function AdminShell({
     return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
   }
 
+  const PUSH_ERROR_MESSAGES: Record<string, string> = {
+    unsupported: "Push notifications aren't supported in this browser — try Chrome or Edge.",
+    "permission-denied":
+      "Notifications are blocked for this site. Enable them in your browser's site settings, then try again.",
+    "no-token": "Couldn't get a push token from Firebase. Please try again in a moment.",
+    "save-failed": "Permission was granted, but we couldn't save it on our server. Please try again.",
+    error: "Something went wrong enabling alerts. Please try again.",
+  };
+
   async function handleEnableAlerts() {
-    // Registers this browser for push (survives the browser being fully closed) —
-    // requestNotificationPermission() afterwards just re-reads the now-decided
-    // permission so the banner hides; it doesn't prompt a second time.
-    await enableAdminPush();
+    // enableAdminPush() previously had its {ok, reason} result silently discarded —
+    // a failure (blocked permission, an unsupported browser, the FCM token fetch
+    // throwing, or the save to our server failing) left the admin with zero
+    // feedback: the click just appeared to do nothing. Now every failure mode
+    // shows a specific, retriable message instead.
+    setPushError(null);
+    setEnabling(true);
+    const result = await enableAdminPush();
+    setEnabling(false);
+
+    if (!result.ok) {
+      setPushError(PUSH_ERROR_MESSAGES[result.reason ?? "error"] ?? PUSH_ERROR_MESSAGES.error);
+      return;
+    }
+
+    // Re-reads the now-decided browser permission so the banner hides — doesn't
+    // prompt a second time, enableAdminPush() already asked.
     await requestNotificationPermission();
   }
 
@@ -186,16 +210,39 @@ export function AdminShell({
             <LogOut size={15} /> Log out
           </button>
         </header>
-        {notificationPermission === "default" && (
-          <div className="flex flex-wrap items-center gap-2 border-b border-ag-green/20 bg-ag-green/5 px-4 py-2 text-sm text-foreground sm:px-6">
-            <Bell size={15} className="shrink-0 text-ag-green" />
-            <span>Get notified the moment a new order comes in — even with this browser closed.</span>
+        {(notificationPermission === "default" || pushError) && (
+          <div
+            className={cn(
+              "flex flex-wrap items-center gap-2 border-b px-4 py-2 text-sm sm:px-6",
+              pushError
+                ? "border-danger/20 bg-danger/5 text-danger"
+                : "border-ag-green/20 bg-ag-green/5 text-foreground",
+            )}
+          >
+            <Bell size={15} className={cn("shrink-0", pushError ? "text-danger" : "text-ag-green")} />
+            <span>
+              {pushError ?? "Get notified the moment a new order comes in — even with this browser closed."}
+            </span>
             <button
               onClick={handleEnableAlerts}
-              className="ml-auto shrink-0 rounded-lg bg-ag-green px-3 py-1 text-xs font-medium text-white"
+              disabled={enabling}
+              className={cn(
+                "ml-auto shrink-0 rounded-lg px-3 py-1 text-xs font-medium text-white disabled:opacity-60",
+                pushError ? "bg-danger" : "bg-ag-green",
+              )}
             >
-              Enable alerts
+              {enabling ? "Enabling…" : pushError ? "Retry" : "Enable alerts"}
             </button>
+          </div>
+        )}
+        {notificationPermission === "denied" && (
+          <div className="flex flex-wrap items-center gap-2 border-b border-danger/20 bg-danger/5 px-4 py-2 text-sm text-danger sm:px-6">
+            <Bell size={15} className="shrink-0" />
+            <span>
+              Notifications are blocked for this site — a browser can&apos;t re-prompt once blocked. Open this
+              site&apos;s settings in your browser (usually the padlock icon next to the address bar) and allow
+              notifications, then reload this page.
+            </span>
           </div>
         )}
         <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
